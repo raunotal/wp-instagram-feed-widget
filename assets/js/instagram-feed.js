@@ -1,7 +1,6 @@
-const pageSidePadding = 10;
-const imagesGap = 10;
-
-console.log(window.innerWidth)
+const PAGE_SIDE_PADDING = 10;
+const IMAGES_GAP = 15;
+const CAROUSEL_SPEED = 3000;
 
 const RESPONSIVE_WIDTH = {
   DESKTOP: 1441,
@@ -11,10 +10,22 @@ const RESPONSIVE_WIDTH = {
 
 const carousel = document.getElementById("instagram-feed-carousel");
 
-const removeElementorPadding = (carousel) => {
-  const elementorContainer = carousel.parentElement.parentElement.parentElement.parentElement;
-  elementorContainer.style.padding = 0;
-}
+let interval;
+
+const activateCarousel = (carousel, imageWidth, imagesTotal, imagesCount) => {
+  let position = 0;
+  let count = 0;
+  interval = setInterval(() => {
+    if (count === imagesTotal - imagesCount) {
+      position = 0;
+      count = 0;
+    } else {
+      position -= imageWidth + IMAGES_GAP;
+      count++;
+    }
+    carousel.style.transform = `translate3d(${position}px, 0px, 0px)`;
+  }, CAROUSEL_SPEED);
+};
 
 const resizeImages = (carousel) => {
   const width = innerWidth;
@@ -29,21 +40,25 @@ const resizeImages = (carousel) => {
     imagesCount = 5;
   }
 
-  const containerWidth = width - 2 * pageSidePadding;
-  const imageWidth =
-    ((containerWidth - (imagesCount - 1) * imagesGap) / imagesCount) + 1;
+  const containerWidth = width - 2 * PAGE_SIDE_PADDING;
+  const imageWidth = Math.round(
+    (containerWidth - (imagesCount - 1) * IMAGES_GAP) / imagesCount
+  );
+  const carouselWidth = imagesTotal * (imageWidth + IMAGES_GAP) - 10;
 
-  carousel.style.width = `${imagesTotal * (imageWidth + imagesGap) - 10}px`;
+  carousel.style.width = `${carouselWidth}px`;
 
   for (let i = 0; i < carousel.children.length; i++) {
     const imageContainer = carousel.children[i];
     imageContainer.style.width = `${imageWidth}px`;
   }
 
-  console.log("FINISHED");
+  if (interval) {
+    clearInterval(interval)
+  }
+
+  activateCarousel(carousel, imageWidth, imagesTotal, imagesCount);
 };
 
 resizeImages(carousel);
-removeElementorPadding(carousel);
-
 addEventListener("resize", () => resizeImages(carousel));
