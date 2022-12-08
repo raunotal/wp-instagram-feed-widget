@@ -28,6 +28,9 @@ const activateCarousel = (carousel, imageWidth, imagesTotal, imagesCount) => {
 };
 
 const resizeImages = (carousel) => {
+  if (!carousel) {
+    return;
+  }
   const width = innerWidth;
   const imagesTotal = carousel.dataset.count;
 

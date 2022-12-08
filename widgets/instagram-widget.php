@@ -75,13 +75,15 @@ class Instagram_Feed_Widget extends \Elementor\Widget_Base
 
   protected function render()
   {
-
     $settings = $this->get_settings_for_display();
     $secret = $settings['secret'];
     $access_token = $settings['token'];
     $url = 'https://graph.instagram.com/me/media/?fields=caption,media_type,media_url,permalink,thumbnail_url&limit=20&access_token=' . esc_html($access_token);
     $instagram_data = wp_remote_retrieve_body(wp_remote_get($url));
     $instagram_data = json_decode($instagram_data, true);
+    if (empty($instagram_data)) {
+      return;
+    }
     $imagesCount = count($instagram_data['data']);
 ?>
 
